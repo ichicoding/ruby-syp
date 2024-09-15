@@ -18,30 +18,38 @@ class ProductsController < ApplicationController
         # Filter freight data by the selected destination
         filtered_freights = freight_data.select { |f| f[:destination] == destination }
 
-        # Create a list of results with all matching options
+        # Map the results with the relevant calculations
         results = matched_products.map do |p|
+          # Match the freights by mill
           matching_freights = filtered_freights.select { |f| f[:mill] == p[:mill] }
           next if matching_freights.empty?
 
+          # Prepare results with all options
           matching_freights.map do |f|
             {
               product: p[:product],
-              total_price: p[:base_price].to_f + f[:freight_cost].to_f,
-              mill: p[:mill]
+              available: p[:available],
+              base_price: p[:base_price],
+              freight_costs: f[:freight_cost],
+              mill: p[:mill],
+              total_price: p[:base_price].to_f + f[:freight_cost].to_f
             }
           end
         end.flatten.compact
 
-        # Sort results by total price
+        # Sort by total_price in ascending order
         sorted_results = results.sort_by { |r| r[:total_price] }
 
-        # Return all sorted options
-        render json: { results: sorted_results }
+        if sorted_results.any?
+          render json: sorted_results
+        else
+          render json: { error: "No matching options found." }, status: :not_found
+        end
       else
-        # Return unique lists of products and destinations
+        # If no specific product or destination is selected, return unique lists
         render json: {
-          products: products.map { |p| p[:product] }.uniq,
-          destinations: freight_data.map { |f| f[:destination] }.uniq
+          products: products.map { |p| p[:product] }.uniq, 
+          destinations: freight_data.map { |f| f[:destination] }.uniq 
         }
       end
 

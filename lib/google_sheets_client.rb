@@ -37,7 +37,7 @@ class GoogleSheetsClient
     response.values.map do |row| 
       { 
         destination: row[0],        # Column A: destination
-        freight_cost: row[1].to_f,  # Column B: freight_cost (converted to float)
+        freight_costs: row[1].to_f,  # Column B: freight_costs (converted to float)
         mill: row[2]                # Column C: mill
       }
     end
