@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "ruby-rails-integration",
+  "private_key_id": "01a9ad65ee8cd446525b703342c0d6cd5b50a949",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCkZuaYoznBbSIn\n4rzHWQ94Ipai9+lWwWWa1bMml5ATwTWCZvduUb9OoMi5IMFg/rjtaPOt+uo6mMfr\nEIAMFKdld4zVnhMF5euYIBMfS0Av6wgpqguM8RI39AAChRCKi6oli/Wv7iQiq8Vy\noTNzq/ituv64fwOvSIpSMIUEMyIlicY/Dy2/etLF/Mlf13FoxRnMOeCWYb/jtCLO\nlatQTd+qntOk0zB3tRqhqZl5paYOZ3H0pA5Lcs0yq2YL9Rqt0jG7oEOJZT1raONV\nMyQZo6ANbPzSStQz8o7uyRUKiNcrS/Ld+gy8hSZICAJqoXe5gfeDCYmsMW7Xu73L\n624VO9oHAgMBAAECggEAI1CvbE5z06cb1TGRl8j717SmYy+aAjbdGpuZNksMehHg\n6rgvopUQ4VUMiSgOIkXVd7o5zj++HQRAva/3saCmLNe3exPPxk6Tg0Qwl2JU0XZN\ndJXAkXAfl8FkVyY6XWiPDi24gyhGvuPjMDKMmOZyLu+iVAOEyRxuCiW+DR7m0OUk\n/Fz8cZ+YGtrvemEKkMoWVbGNwybY06SVMiavOoWMVaJ2Er4xANt1qykCBZd63z7/\n16X8wHMolrFMYLMStOX2oaEfWc7xmr+QduRvgsvzcDuOgBJLopSh17JXqjTw+Z11\nGOKg6Yvtf5RtXpYMQWReK9KGP7JSbyMz0UV7UXhqkQKBgQDkHJ6ZpFnbf86aqpn9\ntaivb6ppA3iMCqXrLUUsmyl4UoJRvVAClE2+/91fluLhVHycJp2n7BqY0PLVRDKj\n1li29y/1YF7ewP9C76ymUjE+YzfBaHVMgyeHa3DRr2WP+YF8LxH0ZHULjSESMwOM\noCu1zkvnr+38c0vZV0hYGxrZ/QKBgQC4gE7i5/UJjzn1uwNj4d6RbPb7ix3wDCoY\nz/pP6lXsJDwnUvo4DXAKX3LiAgK7lZ+kHPwZqaXL+DeVEmX9OZXbFE8egAzRV5Rf\nzBr6UeBR80E4cByG+9ErAMcEiX87umusbho3CTyHMNj0mXWkjb39CctznHUpHnhZ\nVhmZ3pDxUwKBgFiJlzFxLgNZJvq3Ls/fm1qEj/L0iuxoEaAnUQsQKlduRvCs9woZ\nP9fbfbPlX6gv37HH9zc/F8+qgiYusy0OPB6/8Jhf0FLLPAhh+HQRwNVDM1fZUHXj\nDgussvxgBJ6OLCjkKCbgeuGB5I0oyb7iSDTnnmSNz2RF5/Gyw/yWgKSNAoGAPE1T\nez4tDI7Pds1E8mRkhkuC/fweMNMI/0samPwSUTgWoROxzJg3wmwn9E6L7hudLdp7\nWzfjhKMAJ6z3wKgNnqkoouNfTRy+1gCz4JTaKG7FJlkeOdAcMV3zrjvyZecsQhNK\nZiqSqe0BPBDcLohVTFrjMEo20NWwqCJIA86GuRkCgYEAzWzpZRV1fdl9bDmcK7bc\nxTlcxz4l4XMBgI7/cnBCS/pzBm62ozM73yJtQOx+e7jgMz1kcWGHWS2LeeuVV/R/\nTK1rL8+z+MfhW4+yXfXOoynhuFcyjjqP9pfZ0FalypDPETfJ7UHyAnu5dDTJ0j3F\nN8RD8q985No66qaIVTdBXpQ=\n-----END PRIVATE KEY-----\n",
+  "client_email": "ruby-lumber@ruby-rails-integration.iam.gserviceaccount.com",
+  "client_id": "102683185071666180737",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ruby-lumber%40ruby-rails-integration.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
