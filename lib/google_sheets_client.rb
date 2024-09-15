@@ -36,10 +36,10 @@ class GoogleSheetsClient
     response = SHEETS_API.get_spreadsheet_values(spreadsheet_id, range)
     response.values.map do |row| 
       { 
-        destination: row[0],        # Column A: destination
-        freight_costs: row[1].to_f,  # Column B: freight_costs (converted to float)
-        mill: row[2]                # Column C: mill
+        destination: row[0].strip,  # Column A: destination, stripping extra whitespace
+        freight_costs: row[1].gsub(/[^\d\.]/, '').to_f,  # Remove all non-numeric characters except the dot and convert to float
+        mill: row[2].strip  # Column C: mill, stripping extra whitespace
       }
     end
-  end
+  end  
 end
