@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="App">
       {/* App Title */}
-      <h1 className="app-title">SYP Lumber Search</h1>
+      <h1 className="app-title">SYP Search</h1>
       
       {/* Instructions */}
       <p>Select a Product and a Destination</p>
