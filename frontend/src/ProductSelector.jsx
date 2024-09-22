@@ -10,6 +10,7 @@ function ProductSelector() {
   const [filteredResults, setFilteredResults] = useState([]);
   const [error, setError] = useState('');
   const [filterType, setFilterType] = useState('');
+  const [deals, setDeals] = useState([]); // New state for deals
 
   // Fetch products and destinations from backend
   useEffect(() => {
@@ -43,9 +44,25 @@ function ProductSelector() {
           setError('An error occurred while fetching data.');
         });
     } else {
-      // Set the error message only in one place
       setError('Please select both a product and a destination.');
     }
+  };
+
+  // Fetch deals when the "Deals" button is clicked
+  const fetchDeals = () => {
+    axios.get('http://localhost:3000/deals')
+      .then(response => {
+        if (response.data.length === 0) {
+          setError('No deals available at the moment.');
+        } else {
+          setDeals(response.data); // Set the fetched deals data to state
+          setError(''); // Clear any previous errors
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching deals:', error);
+        setError('An error occurred while fetching deals.');
+      });
   };
 
   // Clear search results and reset selections
@@ -56,6 +73,7 @@ function ProductSelector() {
     setFilteredResults([]);
     setError('');
     setFilterType('');
+    setDeals([]); // Clear deals when results are cleared
   };
 
   // Function to extract the length from the product string
@@ -149,20 +167,36 @@ function ProductSelector() {
         ))}
       </select>
 
-      {/* Add a Search button */}
-      <button onClick={fetchResults}>Search</button>
+      {/* Search button to fetch results */}
+      <button onClick={fetchResults} style={{ marginTop: '10px' }}>Search</button>
 
-      {/* Add a Clear button */}
-      <button onClick={clearResults}>Clear</button>
+      <button onClick={clearResults} style={{ marginTop: '10px', marginLeft: '10px' }}>Clear</button>
 
-      {/* Filter Buttons */}
-      <div style={{ marginTop: '20px' }}>
-        <button onClick={() => filterResults('product')}>Filter by Product</button>
-        <button onClick={() => filterResults('mill')}>Filter by Mill</button>
+      {/* Filter and Deals Buttons */}
+      <div style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+        <button onClick={() => filterResults('product')} style={{ padding: '10px 15px' }}>Filter by Product</button>
+        <button onClick={() => filterResults('mill')} style={{ padding: '10px 15px' }}>Filter by Mill</button>
+        <button
+          onClick={fetchDeals}
+          style={{
+            padding: '10px 15px',
+            backgroundColor: '#CFA73D', // Gold color for the deals button
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            transition: 'transform 0.2s',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        >
+          💰 Deals
+        </button>
       </div>
 
       <div>
-        {error && <div>{error}</div>}
+        {error && <div style={{ color: 'red' }}>{error}</div>}
         {filteredResults.length > 0 && (
           <table>
             <thead>
@@ -184,6 +218,34 @@ function ProductSelector() {
                   <td>{result.base_price}</td>
                   <td>{result.freight_costs}</td>
                   <td>{result.total_price}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {/* Display Deals */}
+        {deals.length > 0 && (
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Zone</th>
+                <th>Product Base Price</th>
+                <th>Print Base Price</th>
+                <th>Available Units</th>
+                <th>Mill</th>
+              </tr>
+            </thead>
+            <tbody>
+              {deals.map((deal, index) => (
+                <tr key={index}>
+                  <td>{deal.product}</td>
+                  <td>{deal.zone}</td>
+                  <td>{deal.product_base_price}</td>
+                  <td>{deal.print_base_price}</td>
+                  <td>{deal.available_units}</td>
+                  <td>{deal.mill}</td>
                 </tr>
               ))}
             </tbody>

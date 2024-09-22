@@ -1,10 +1,12 @@
 Rails.application.routes.draw do
   get 'products', to: 'products#index'
+  post '/login', to: 'sessions#create'
+  delete '/logout', to: 'sessions#destroy'
 
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # New route to handle comparing prices between products and print sheets
+  get '/deals', to: 'products#compare_prices'
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Health check route
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
