@@ -10,7 +10,8 @@ function ProductSelector() {
   const [filteredResults, setFilteredResults] = useState([]);
   const [error, setError] = useState('');
   const [filterType, setFilterType] = useState('');
-  const [deals, setDeals] = useState([]); // New state for deals
+  const [deals, setDeals] = useState([]);
+  const [filteredDeals, setFilteredDeals] = useState([]);
 
   // Fetch products and destinations from backend
   useEffect(() => {
@@ -36,7 +37,7 @@ function ProductSelector() {
             setError('');
             const newResults = [...results, ...response.data];
             setResults(newResults);
-            setFilteredResults(newResults); // Reset the filtered results to include new results
+            setFilteredResults(newResults);
           }
         })
         .catch((error) => {
@@ -55,8 +56,9 @@ function ProductSelector() {
         if (response.data.length === 0) {
           setError('No deals available at the moment.');
         } else {
-          setDeals(response.data); // Set the fetched deals data to state
-          setError(''); // Clear any previous errors
+          setDeals(response.data);
+          setFilteredDeals(response.data);
+          setError('');
         }
       })
       .catch(error => {
@@ -73,82 +75,79 @@ function ProductSelector() {
     setFilteredResults([]);
     setError('');
     setFilterType('');
-    setDeals([]); // Clear deals when results are cleared
+    setDeals([]);
+    setFilteredDeals([]);
   };
 
   // Function to extract the length from the product string
   const extractLength = (product) => {
-    const match = product.match(/\d+$/); // Match the last number in the product string
-    return match ? parseInt(match[0], 10) : 0; // Return the number found, or 0 if none found
+    const match = product.match(/\d+$/);
+    return match ? parseInt(match[0], 10) : 0;
   };
 
   // Function to extract the dimension (like '2x4') from the product string
   const extractDimension = (product) => {
-    const match = product.match(/^\d+x\d+/); // Match the dimension pattern at the start
+    const match = product.match(/^\d+x\d+/);
     return match ? match[0] : '';
   };
 
   // Function to extract the grade (like '#1', '#2') from the product string
   const extractGrade = (product) => {
-    const match = product.match(/#\d+/); // Match the grade pattern
+    const match = product.match(/#\d+/);
     return match ? match[0] : '';
   };
 
   // Filter results by product, mill, or grade
-  const filterResults = (type) => {
+  const filterResults = (type, isDeals = false) => {
+    const targetResults = isDeals ? deals : results;
+    const setFiltered = isDeals ? setFilteredDeals : setFilteredResults;
+
     setFilterType(type);
+
     if (type === 'product') {
-      const filtered = [...results].sort((a, b) => {
+      const filtered = [...targetResults].sort((a, b) => {
         const dimensionA = extractDimension(a.product);
         const dimensionB = extractDimension(b.product);
-
-        // First, sort by dimension
         const dimensionCompare = dimensionA.localeCompare(dimensionB);
         if (dimensionCompare !== 0) return dimensionCompare;
 
-        // If dimensions are the same, sort by grade
         const gradeA = extractGrade(a.product);
         const gradeB = extractGrade(b.product);
         const gradeCompare = gradeA.localeCompare(gradeB);
         if (gradeCompare !== 0) return gradeCompare;
 
-        // If grades are the same, sort by length
         const lengthA = extractLength(a.product);
         const lengthB = extractLength(b.product);
         return lengthA - lengthB;
       });
-      setFilteredResults(filtered);
+      setFiltered(filtered);
     } else if (type === 'mill') {
-      const filtered = [...results].sort((a, b) => {
-        // Sort by mill first
+      const filtered = [...targetResults].sort((a, b) => {
         const millCompare = a.mill.localeCompare(b.mill);
         if (millCompare !== 0) return millCompare;
 
-        // If mill names are the same, sort by dimension
         const dimensionA = extractDimension(a.product);
         const dimensionB = extractDimension(b.product);
         const dimensionCompare = dimensionA.localeCompare(dimensionB);
         if (dimensionCompare !== 0) return dimensionCompare;
 
-        // If dimensions are the same, sort by grade
         const gradeA = extractGrade(a.product);
         const gradeB = extractGrade(b.product);
         const gradeCompare = gradeA.localeCompare(gradeB);
         if (gradeCompare !== 0) return gradeCompare;
 
-        // If grades are the same, sort by length
         const lengthA = extractLength(a.product);
         const lengthB = extractLength(b.product);
         return lengthA - lengthB;
       });
-      setFilteredResults(filtered);
+      setFiltered(filtered);
     } else {
-      setFilteredResults(results); // If no filter type is selected, show all results
+      setFiltered(targetResults);
     }
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '20px', overflowY: 'auto', maxHeight: '90vh' }}> {/* Add styles to make the top buttons accessible */}
       <select value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)}>
         <option value="">Select Product</option>
         {products.map((product, index) => (
@@ -167,12 +166,9 @@ function ProductSelector() {
         ))}
       </select>
 
-      {/* Search button to fetch results */}
       <button onClick={fetchResults} style={{ marginTop: '10px' }}>Search</button>
-
       <button onClick={clearResults} style={{ marginTop: '10px', marginLeft: '10px' }}>Clear</button>
 
-      {/* Filter and Deals Buttons */}
       <div style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
         <button onClick={() => filterResults('product')} style={{ padding: '10px 15px' }}>Filter by Product</button>
         <button onClick={() => filterResults('mill')} style={{ padding: '10px 15px' }}>Filter by Mill</button>
@@ -180,7 +176,7 @@ function ProductSelector() {
           onClick={fetchDeals}
           style={{
             padding: '10px 15px',
-            backgroundColor: '#CFA73D', // Gold color for the deals button
+            backgroundColor: '#CFA73D',
             color: '#fff',
             border: 'none',
             borderRadius: '5px',
@@ -224,32 +220,39 @@ function ProductSelector() {
           </table>
         )}
 
-        {/* Display Deals */}
-        {deals.length > 0 && (
-          <table>
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Zone</th>
-                <th>Product Base Price</th>
-                <th>Print Base Price</th>
-                <th>Available Units</th>
-                <th>Mill</th>
-              </tr>
-            </thead>
-            <tbody>
-              {deals.map((deal, index) => (
-                <tr key={index}>
-                  <td>{deal.product}</td>
-                  <td>{deal.zone}</td>
-                  <td>{deal.product_base_price}</td>
-                  <td>{deal.print_base_price}</td>
-                  <td>{deal.available_units}</td>
-                  <td>{deal.mill}</td>
+        {filteredDeals.length > 0 && (
+          <>
+            <div style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button onClick={() => filterResults('product', true)} style={{ padding: '10px 15px' }}>Filter Deals by Product</button>
+              <button onClick={() => filterResults('mill', true)} style={{ padding: '10px 15px' }}>Filter Deals by Mill</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Zone</th>
+                  <th>Product Base Price</th>
+                  <th>Print Base Price</th>
+                  <th>Available Units</th>
+                  <th>Mill</th>
+                  <th>Price Difference</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredDeals.map((deal, index) => (
+                  <tr key={index}>
+                    <td>{deal.product}</td>
+                    <td>{deal.zone}</td>
+                    <td>{deal.product_base_price}</td>
+                    <td>{deal.print_base_price}</td>
+                    <td>{deal.available_units}</td>
+                    <td>{deal.mill}</td>
+                    <td>{deal.price_difference.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
     </div>

@@ -26,7 +26,7 @@ class ProductsController < ApplicationController
 
           # Find the minimum freight cost
           min_freight = matching_freights.min_by { |f| f[:freight_costs].to_f }
-          
+
           {
             product: p[:product],
             available: p[:available],
@@ -76,27 +76,47 @@ class ProductsController < ApplicationController
 
       # Compare prices based on product and zone
       products_data.each do |product|
-        matching_print = print_data.find { |p| p[:product] == product[:product] && p[:zone] == product[:zone] }
+        # Convert text to lowercase and trim extra spaces
+        product_name = product[:product]&.strip&.downcase
+        product_zone = product[:zone]&.strip&.downcase
+        product_base_price = product[:base_price]&.to_f
 
-        # Check if matching product and zone found, and if the base price is lower in the 'products' sheet
-        if matching_print && product[:base_price] <= matching_print[:base_price]
+        # Check for undefined or empty values
+        next if product_name.blank? || product_zone.blank? || product_base_price.nil?
+
+        # Find matching product in print data with the same name and zone
+        matching_print = print_data.find do |p|
+          p_name = p[:product]&.strip&.downcase
+          p_zone = p[:zone]&.strip&.downcase
+          p_name == product_name && p_zone == product_zone
+        end
+
+        # Continue if no match found or if print price is undefined
+        next if matching_print.nil? || matching_print[:base_price].nil?
+
+        print_base_price = matching_print[:base_price].to_f
+
+        # Compare prices and add to deals if product price is less
+        if product_base_price < print_base_price
+          price_difference = print_base_price - product_base_price
           deals << {
             product: product[:product],
             zone: product[:zone],
-            product_base_price: product[:base_price],
-            print_base_price: matching_print[:base_price],
-            available_units: product[:available], # Include available units from the products data
-            mill: product[:mill]
+            product_base_price: product_base_price,
+            print_base_price: print_base_price,
+            available_units: product[:available],
+            mill: product[:mill],
+            price_difference: price_difference # Add price difference to the results
           }
         end
       end
 
       # Return the matching deals
-      # Just before the render json: deals line in compare_prices
-      puts "Deals Array: #{deals.inspect}"
-      logger.info "Deals Array: #{deals.inspect}"
-
-      render json: deals
+      if deals.empty?
+        render json: { message: "No deals available at the moment." }
+      else
+        render json: deals
+      end
 
     rescue Google::Apis::Error => e
       logger.error "Failed to fetch data from Google Sheets: #{e.message}"
